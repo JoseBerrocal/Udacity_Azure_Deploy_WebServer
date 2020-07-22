@@ -7,6 +7,11 @@ tenant_id = "ff1217c8-dc0a-4f38-ba01-96beee1ab324"
 # Resource Group/Location
 location = "West US 2"
 resource_group = "rg_deploy_webpage"
+
+# Virtual Network
+virtual_network = "vir_net_webapp"
+address_space = ["10.0.0.0/16"]
+
 #resource_type = "AppService"
 application_type = "AzureJBmyApplication1" # This name has to be globally unique.
 

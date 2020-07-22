@@ -26,6 +26,19 @@ module "resource_group" {
   resource_group       = "${var.resource_group}"
   location             = "${var.location}"
 }
+
+
+# Create a virtual network within the resource group
+module "azurerm_virtual_network" {
+  source              = "../../modules/virtual_network"  
+  virtual_network     = "${var.virtual_network}"
+  resource_group      = "${module.resource_group.resource_group_name}"
+  location            = "${var.location}"
+  address_space       = "${var.address_space}"
+}
+
+
+
 # Reference the AppService Module here.
 
 /*module "app_service" {

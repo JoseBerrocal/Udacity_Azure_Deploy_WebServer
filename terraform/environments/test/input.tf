@@ -9,6 +9,11 @@ variable "location" {}
 variable "resource_group" {}
 variable "application_type" {}
 
+# Virtual Network
+variable "virtual_network" {}
+variable "address_space" {type    = list(string)}
+
+
 # Tags
 # Tags
 variable tier {}
