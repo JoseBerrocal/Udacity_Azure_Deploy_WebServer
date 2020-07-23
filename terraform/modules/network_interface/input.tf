@@ -5,3 +5,4 @@ variable "location" {}
 #Network Interface
 variable "network_interface" {}
 variable "subnet_id" {}
+variable "ip_configuration_name" {}

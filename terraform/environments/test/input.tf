@@ -24,9 +24,15 @@ variable "resource_group_name" {}
 
 # Network Interface
 variable "network_interface" {}
+variable "ip_configuration_name" {}
 
 # Public IP
 variable "public_ip_name" {}
+
+# Load Balancer
+variable "load_balancer" {}
+variable "frontend_ip_name" {}
+variable "network_interface_id" {} 
 
 # Tags
 # Tags

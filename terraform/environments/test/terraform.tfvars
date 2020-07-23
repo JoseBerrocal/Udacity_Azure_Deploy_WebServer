@@ -21,9 +21,14 @@ network_security_group = "network_secgroup_webpage"
 
 # Network Interface
 network_interface = "network_interface"
+ip_configuration_name = "internal"
 
 # Public IP
 public_ip_name = "publicIP"
+
+# Load Balancer
+load_balancer = "WebPage-LoadBalancer"
+frontend_ip_name = "FrontEnd-PublicIPAdress"
 
 #resource_type = "AppService"
 application_type = "AzureJBmyApplication1" # This name has to be globally unique.

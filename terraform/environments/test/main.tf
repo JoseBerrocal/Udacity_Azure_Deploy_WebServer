@@ -61,7 +61,8 @@ module "network_interface" {
   network_interface       = "${var.network_interface}"
   location                = "${var.location}"
   resource_group          = "${module.resource_group.resource_group_name}"
-  subnet_id               = "${module.virtual_subnet.virtual_subnet_id}"  
+  subnet_id               = "${module.virtual_subnet.virtual_subnet_id}"
+  ip_configuration_name   = "${var.ip_configuration_name}"
 }
 
 # Create Public IP
@@ -71,6 +72,19 @@ module "public_ip" {
   location            = "${var.location}"
   resource_group      = "${module.resource_group.resource_group_name}"
 }
+
+# Create a Load Balancer 
+module "load_balancer" {
+  source                  = "../../modules/load_balancer"   
+  load_balancer           = "${var.load_balancer}"
+  location                = "${var.location}"
+  resource_group          = "${module.resource_group.resource_group_name}"
+  frontend_ip_name        = "${var.frontend_ip_name}"
+  public_ip_address_id    = "${module.public_ip.public_ip_id}"
+  network_interface_id    = "${module.network_interface.network_interface_id}"
+  ip_configuration_name   = "${var.ip_configuration_name}"  
+}
+
 # Reference the AppService Module here.
 
 /*module "app_service" {
