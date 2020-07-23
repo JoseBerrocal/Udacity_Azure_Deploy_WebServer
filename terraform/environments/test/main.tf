@@ -56,6 +56,15 @@ module "network_security_group" {
   resource_group          = "${module.resource_group.resource_group_name}"
 }
 
+# Create the Network Interface
+
+module "network_interface" {
+  source                  = "../../modules/network_interface"  
+  network_interface       = "${var.network_interface}"
+  location                = "${var.location}"
+  resource_group          = "${module.resource_group.resource_group_name}"
+  subnet_id               = "${module.virtual_subnet.virtual_subnet_id}"  
+}
 
 # Reference the AppService Module here.
 

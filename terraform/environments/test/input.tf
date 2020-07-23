@@ -22,6 +22,9 @@ variable "address_prefix" {}
 variable "network_security_group" {}
 variable "resource_group_name" {}
 
+# Network Interface
+variable "network_interface" {}
+
 # Tags
 # Tags
 variable tier {}
