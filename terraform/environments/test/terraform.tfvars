@@ -12,6 +12,10 @@ resource_group = "rg_deploy_webpage"
 virtual_network = "vir_net_webapp"
 address_space = ["10.0.0.0/16"]
 
+# Virtual SubNetwork
+virtual_subnet = "internal_virtsubnet"
+address_prefix = "10.0.1.0/24"
+
 # Network Security Group
 network_security_group = "network_secgroup_webpage"
 

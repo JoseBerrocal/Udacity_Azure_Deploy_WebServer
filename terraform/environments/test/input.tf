@@ -13,6 +13,11 @@ variable "application_type" {}
 variable "virtual_network" {}
 variable "address_space" {type    = list(string)}
 
+#Virtual SubNet
+variable "virtual_subnet" {}
+variable "address_prefix" {}
+
+
 # Network Security Group 
 variable "network_security_group" {}
 variable "resource_group_name" {}

@@ -28,13 +28,23 @@ module "resource_group" {
 }
 
 
-# Create a virtual network within the resource group
-module "azurerm_virtual_network" {
+# Create a virtual network
+module "virtual_network" {
   source              = "../../modules/virtual_network"  
   virtual_network     = "${var.virtual_network}"
   resource_group      = "${module.resource_group.resource_group_name}"
   location            = "${var.location}"
   address_space       = "${var.address_space}"
+}
+
+# Create a virtual subnet
+module "virtual_subnet" {
+  source              = "../../modules/virtual_subnet"  
+  virtual_subnet      = "${var.virtual_subnet}"   
+  resource_group      = "${module.resource_group.resource_group_name}"
+  location            = "${var.location}"
+  virtual_network     = "${module.virtual_network.virtual_network_name}"
+  address_prefix      = "${var.address_prefix}"
 }
 
 # Create the Network Security Group
