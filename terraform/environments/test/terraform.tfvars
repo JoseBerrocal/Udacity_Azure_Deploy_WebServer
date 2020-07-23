@@ -12,6 +12,9 @@ resource_group = "rg_deploy_webpage"
 virtual_network = "vir_net_webapp"
 address_space = ["10.0.0.0/16"]
 
+# Network Security Group
+network_security_group = "network_secgroup_webpage"
+
 #resource_type = "AppService"
 application_type = "AzureJBmyApplication1" # This name has to be globally unique.
 

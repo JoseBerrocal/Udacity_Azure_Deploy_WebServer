@@ -13,6 +13,9 @@ variable "application_type" {}
 variable "virtual_network" {}
 variable "address_space" {type    = list(string)}
 
+# Network Security Group 
+variable "network_security_group" {}
+variable "resource_group_name" {}
 
 # Tags
 # Tags

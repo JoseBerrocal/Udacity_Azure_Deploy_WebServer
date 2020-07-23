@@ -37,6 +37,14 @@ module "azurerm_virtual_network" {
   address_space       = "${var.address_space}"
 }
 
+# Create the Network Security Group
+
+module "network_security_group" {
+  source                  = "../../modules/network_security_group"
+  network_security_group  = "${var.network_security_group}"
+  location                = "${var.location}"
+  resource_group          = "${module.resource_group.resource_group_name}"
+}
 
 
 # Reference the AppService Module here.
