@@ -25,6 +25,9 @@ variable "resource_group_name" {}
 # Network Interface
 variable "network_interface" {}
 
+# Public IP
+variable "public_ip_name" {}
+
 # Tags
 # Tags
 variable tier {}

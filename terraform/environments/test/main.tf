@@ -48,7 +48,6 @@ module "virtual_subnet" {
 }
 
 # Create the Network Security Group
-
 module "network_security_group" {
   source                  = "../../modules/network_security_group"
   network_security_group  = "${var.network_security_group}"
@@ -57,7 +56,6 @@ module "network_security_group" {
 }
 
 # Create the Network Interface
-
 module "network_interface" {
   source                  = "../../modules/network_interface"  
   network_interface       = "${var.network_interface}"
@@ -66,6 +64,13 @@ module "network_interface" {
   subnet_id               = "${module.virtual_subnet.virtual_subnet_id}"  
 }
 
+# Create Public IP
+module "public_ip" {
+  source              = "../../modules/public_ip" 
+  public_ip_name      = "${var.public_ip_name}"
+  location            = "${var.location}"
+  resource_group      = "${module.resource_group.resource_group_name}"
+}
 # Reference the AppService Module here.
 
 /*module "app_service" {

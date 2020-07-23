@@ -22,6 +22,9 @@ network_security_group = "network_secgroup_webpage"
 # Network Interface
 network_interface = "network_interface"
 
+# Public IP
+public_ip_name = "publicIP"
+
 #resource_type = "AppService"
 application_type = "AzureJBmyApplication1" # This name has to be globally unique.
 
