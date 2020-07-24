@@ -30,6 +30,9 @@ public_ip_name = "publicIP"
 load_balancer = "WebPage-LoadBalancer"
 frontend_ip_name = "FrontEnd-PublicIPAdress"
 
+# Availability Set &  Virtual Machines
+availability_set = "AvailabilitySet"
+
 #resource_type = "AppService"
 application_type = "AzureJBmyApplication1" # This name has to be globally unique.
 

@@ -34,6 +34,9 @@ variable "load_balancer" {}
 variable "frontend_ip_name" {}
 variable "network_interface_id" {} 
 
+# Avaliability Set & Virtual Machines
+variable "availability_set" {}
+
 # Tags
 # Tags
 variable tier {}

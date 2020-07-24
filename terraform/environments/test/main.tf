@@ -85,6 +85,15 @@ module "load_balancer" {
   ip_configuration_name   = "${var.ip_configuration_name}"  
 }
 
+# Availability Set and Virtual Machines
+module "availability_set_virtual_machines" {
+  source                  = "../../modules/virtual_machines" 
+  availability_set        = "${var.availability_set}"
+  location                = "${var.location}"
+  resource_group          = "${module.resource_group.resource_group_name}"
+
+}
+
 # Reference the AppService Module here.
 
 /*module "app_service" {
