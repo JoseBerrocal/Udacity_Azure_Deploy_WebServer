@@ -24,7 +24,7 @@
 		},
 		"managed_image_resource_group_name": "sg_image_webserver_azure",
 		"managed_image_name": "ubuntuImage",
-		"location": "West US 2",
+		"location": "West US",
 		"vm_size": "Standard_D2s_v3"
 
 	}],
