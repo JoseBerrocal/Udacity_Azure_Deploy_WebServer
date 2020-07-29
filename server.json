@@ -1,9 +1,9 @@
 {
 	"variables": {
-		"ARM_CLIENT_ID": "bdef5e95-4688-4031-83e6-10a337bb9b59",
-		"ARM_CLIENT_SECRET": "/S^dl2@%f6Fo5|)GmUkh8+Huf=\"OUx:'",
-		"ARM_TENANT_ID": "ff1217c8-dc0a-4f38-ba01-96beee1ab324",
-		"ARM_SUBSCRIPTION_ID": "010976de-a175-413a-84be-6f56f4caec91"
+		"ARM_CLIENT_ID": "8370efcf-e7ce-4084-9c05-8d07dc2b32a5",
+		"ARM_CLIENT_SECRET": ">{x`Gn5vj.#)7\\@y'c_p8hVI/^+X@FXM",
+		"ARM_TENANT_ID": "759b0f8d-2617-4ab1-abd2-fdeeb1fcce0a",
+		"ARM_SUBSCRIPTION_ID": "c605f0e1-a75b-420d-a031-45699271f410"
 	},
 	"builders": [{
 		"type": "azure-arm",
@@ -22,7 +22,7 @@
 			"name": "deploy-im",
 			"environment": "production"
 		},
-		"managed_image_resource_group_name": "new_deploy_webserver_azure",
+		"managed_image_resource_group_name": "sg_image_webserver_azure",
 		"managed_image_name": "ubuntuImage",
 		"location": "West US 2",
 		"vm_size": "Standard_D2s_v3"

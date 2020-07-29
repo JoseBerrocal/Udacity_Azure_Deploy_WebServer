@@ -2,5 +2,14 @@
 variable "resource_group" {}
 variable "location" {}
 
-# Availability Set
+# Network Interface
+variable "network_interface_id" {type = list(string)}
+
+# Availability Set & Virtual Machines
 variable "availability_set" {}
+variable "vm_size" {}
+variable "admin_username" {}
+variable "admin_password" {}
+
+
+variable "instance_count" {}

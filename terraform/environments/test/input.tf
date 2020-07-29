@@ -11,7 +11,7 @@ variable "application_type" {}
 
 # Virtual Network
 variable "virtual_network" {}
-variable "address_space" {type    = list(string)}
+variable "address_space" {type = list(string)}
 
 #Virtual SubNet
 variable "virtual_subnet" {}
@@ -20,7 +20,7 @@ variable "address_prefix" {}
 
 # Network Security Group 
 variable "network_security_group" {}
-variable "resource_group_name" {}
+#variable "resource_group_name" {}
 
 # Network Interface
 variable "network_interface" {}
@@ -32,10 +32,17 @@ variable "public_ip_name" {}
 # Load Balancer
 variable "load_balancer" {}
 variable "frontend_ip_name" {}
-variable "network_interface_id" {} 
+#variable "network_interface_id" {type    = list(string)}
 
 # Avaliability Set & Virtual Machines
 variable "availability_set" {}
+variable "vm_size" {}
+variable "admin_username" {}
+variable "admin_password" {}
+
+
+variable "instance_count" {type = number}
+
 
 # Tags
 # Tags

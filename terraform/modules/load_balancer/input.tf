@@ -9,4 +9,7 @@ variable "ip_configuration_name" {}
 variable "load_balancer" {}
 variable "frontend_ip_name" {}
 variable "public_ip_address_id" {}
-variable "network_interface_id" {}
+variable "network_interface_id" {type = list(string)}
+
+
+variable "instance_count" {type = number}
