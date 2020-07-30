@@ -17,9 +17,11 @@ For this project, you will write a Packer template and a Terraform template to d
 4. Install [Terraform](https://www.terraform.io/downloads.html)
 
 ### Instructions
-**Your words here**
 
 1. Clone the repository
+```bash
+git clone https://github.com/JoseBerrocal/Udacity_Azure_Deploy_WebServer.git
+```
 2. [Configure the storage account and stated backend](https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage). Replace the values below in */terraform/environments/test/main.tf* with the output from the Azure CLI:
 - storage_account_name
 - container_name
@@ -39,12 +41,14 @@ az group create -l westus2 -n MyResourceGroup
 ```
 5. Make sure the location of the new resource group is the same as the one the image will be created, the same make sure the location is updated in *location*
 
-5. Create the ubuntu image
+6. Create the ubuntu image
 ```bash
 packer build server.json
 ```
 
-6. Deploy the  terraform infraestructure
+7. Use the output *ManagedImageId* from the command *packer build server.json*, update source_image_id in *terraform/modules/virtual_machines/vm.tf*
+
+8. Deploy the  terraform infraestructure
 ```bash
 cd terraform/environments/test/
 terraform init
@@ -134,392 +138,401 @@ ManagedImageLocation: West US
 The output from creating the infraestructure using terraform is the following:
 
 ```bash
-(.deploy-webserver) [casita@localhost test]$ terraform plan -out solution.plan
-Acquiring state lock. This may take a few moments...
-Refreshing Terraform state in-memory prior to plan...
-The refreshed state will be used to calculate this plan, but will not be
-persisted to local or remote state storage.
+(.deploy-webserver) [casita@localhost test]$ terraform show 
 
-
-------------------------------------------------------------------------
-
-An execution plan has been generated and is shown below.
-Resource actions are indicated with the following symbols:
-  + create
-
-Terraform will perform the following actions:
-
-  # module.availability_set_virtual_machines.azurerm_availability_set.example will be created
-  + resource "azurerm_availability_set" "example" {
-      + id                           = (known after apply)
-      + location                     = "westus2"
-      + managed                      = true
-      + name                         = "AvailabilitySet"
-      + platform_fault_domain_count  = 2
-      + platform_update_domain_count = 2
-      + resource_group_name          = "deploy_webpage_rg"
-      + tags                         = {
-          + "environment" = "Production"
-        }
+# module.availability_set_virtual_machines.azurerm_availability_set.example:
+resource "azurerm_availability_set" "example" {
+    id                           = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/availabilitySets/AvailabilitySet"
+    location                     = "westus2"
+    managed                      = true
+    name                         = "AvailabilitySet"
+    platform_fault_domain_count  = 2
+    platform_update_domain_count = 2
+    resource_group_name          = "deploy_webpage_rg"
+    tags                         = {
+        "environment" = "Production"
     }
+}
 
-  # module.availability_set_virtual_machines.azurerm_linux_virtual_machine.main[0] will be created
-  + resource "azurerm_linux_virtual_machine" "main" {
-      + admin_password                  = (sensitive value)
-      + admin_username                  = "casita"
-      + allow_extension_operations      = true
-      + availability_set_id             = (known after apply)
-      + computer_name                   = (known after apply)
-      + disable_password_authentication = false
-      + id                              = (known after apply)
-      + location                        = "westus2"
-      + max_bid_price                   = -1
-      + name                            = "vm-0"
-      + network_interface_ids           = (known after apply)
-      + priority                        = "Regular"
-      + private_ip_address              = (known after apply)
-      + private_ip_addresses            = (known after apply)
-      + provision_vm_agent              = true
-      + public_ip_address               = (known after apply)
-      + public_ip_addresses             = (known after apply)
-      + resource_group_name             = "deploy_webpage_rg"
-      + size                            = "Standard_F2"
-      + source_image_id                 = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/sg_image_webserver_azure/providers/Microsoft.Compute/images/ubuntuImage"
-      + virtual_machine_id              = (known after apply)
-      + zone                            = (known after apply)
+# module.availability_set_virtual_machines.azurerm_linux_virtual_machine.main[1]:
+resource "azurerm_linux_virtual_machine" "main" {
+    admin_password                  = (sensitive value)
+    admin_username                  = "casita"
+    allow_extension_operations      = true
+    availability_set_id             = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/availabilitySets/AVAILABILITYSET"
+    computer_name                   = "vm-1"
+    disable_password_authentication = false
+    id                              = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/virtualMachines/vm-1"
+    location                        = "westus2"
+    max_bid_price                   = -1
+    name                            = "vm-1"
+    network_interface_ids           = [
+        "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-1",
+    ]
+    priority                        = "Regular"
+    private_ip_address              = "10.0.1.5"
+    private_ip_addresses            = [
+        "10.0.1.5",
+    ]
+    provision_vm_agent              = true
+    public_ip_addresses             = []
+    resource_group_name             = "deploy_webpage_rg"
+    size                            = "Standard_F2"
+    source_image_id                 = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/sg_image_webserver_azure/providers/Microsoft.Compute/images/ubuntuImage"
+    tags                            = {}
+    virtual_machine_id              = "766c850c-a54f-414b-a86e-da852184787c"
 
-      + os_disk {
-          + caching                   = "ReadWrite"
-          + disk_size_gb              = (known after apply)
-          + name                      = (known after apply)
-          + storage_account_type      = "Standard_LRS"
-          + write_accelerator_enabled = false
-        }
+    os_disk {
+        caching                   = "ReadWrite"
+        disk_size_gb              = 30
+        name                      = "vm-1_disk1_01973dd083b04382a76741aa98750184"
+        storage_account_type      = "Standard_LRS"
+        write_accelerator_enabled = false
     }
+}
 
-  # module.availability_set_virtual_machines.azurerm_linux_virtual_machine.main[1] will be created
-  + resource "azurerm_linux_virtual_machine" "main" {
-      + admin_password                  = (sensitive value)
-      + admin_username                  = "casita"
-      + allow_extension_operations      = true
-      + availability_set_id             = (known after apply)
-      + computer_name                   = (known after apply)
-      + disable_password_authentication = false
-      + id                              = (known after apply)
-      + location                        = "westus2"
-      + max_bid_price                   = -1
-      + name                            = "vm-1"
-      + network_interface_ids           = (known after apply)
-      + priority                        = "Regular"
-      + private_ip_address              = (known after apply)
-      + private_ip_addresses            = (known after apply)
-      + provision_vm_agent              = true
-      + public_ip_address               = (known after apply)
-      + public_ip_addresses             = (known after apply)
-      + resource_group_name             = "deploy_webpage_rg"
-      + size                            = "Standard_F2"
-      + source_image_id                 = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/sg_image_webserver_azure/providers/Microsoft.Compute/images/ubuntuImage"
-      + virtual_machine_id              = (known after apply)
-      + zone                            = (known after apply)
+# module.availability_set_virtual_machines.azurerm_linux_virtual_machine.main[0]:
+resource "azurerm_linux_virtual_machine" "main" {
+    admin_password                  = (sensitive value)
+    admin_username                  = "casita"
+    allow_extension_operations      = true
+    availability_set_id             = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/availabilitySets/AVAILABILITYSET"
+    computer_name                   = "vm-0"
+    disable_password_authentication = false
+    id                              = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/virtualMachines/vm-0"
+    location                        = "westus2"
+    max_bid_price                   = -1
+    name                            = "vm-0"
+    network_interface_ids           = [
+        "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-0",
+    ]
+    priority                        = "Regular"
+    private_ip_address              = "10.0.1.4"
+    private_ip_addresses            = [
+        "10.0.1.4",
+    ]
+    provision_vm_agent              = true
+    public_ip_addresses             = []
+    resource_group_name             = "deploy_webpage_rg"
+    size                            = "Standard_F2"
+    source_image_id                 = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/sg_image_webserver_azure/providers/Microsoft.Compute/images/ubuntuImage"
+    tags                            = {}
+    virtual_machine_id              = "e2927194-80e7-4244-867a-7f5a30a4d298"
 
-      + os_disk {
-          + caching                   = "ReadWrite"
-          + disk_size_gb              = (known after apply)
-          + name                      = (known after apply)
-          + storage_account_type      = "Standard_LRS"
-          + write_accelerator_enabled = false
-        }
+    os_disk {
+        caching                   = "ReadWrite"
+        disk_size_gb              = 30
+        name                      = "vm-0_disk1_e24e37f3956e4896849c6aeb1a86ce12"
+        storage_account_type      = "Standard_LRS"
+        write_accelerator_enabled = false
     }
+}
 
-  # module.load_balancer.azurerm_lb.example will be created
-  + resource "azurerm_lb" "example" {
-      + id                   = (known after apply)
-      + location             = "westus2"
-      + name                 = "WebPage-LoadBalancer"
-      + private_ip_address   = (known after apply)
-      + private_ip_addresses = (known after apply)
-      + resource_group_name  = "deploy_webpage_rg"
-      + sku                  = "Basic"
 
-      + frontend_ip_configuration {
-          + id                            = (known after apply)
-          + inbound_nat_rules             = (known after apply)
-          + load_balancer_rules           = (known after apply)
-          + name                          = "FrontEnd-PublicIPAdress"
-          + outbound_rules                = (known after apply)
-          + private_ip_address            = (known after apply)
-          + private_ip_address_allocation = (known after apply)
-          + private_ip_address_version    = "IPv4"
-          + public_ip_address_id          = (known after apply)
-          + public_ip_prefix_id           = (known after apply)
-          + subnet_id                     = (known after apply)
-        }
+# module.public_ip.azurerm_public_ip.example:
+resource "azurerm_public_ip" "example" {
+    allocation_method       = "Static"
+    id                      = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/publicIPAddresses/publicIP"
+    idle_timeout_in_minutes = 4
+    ip_address              = "52.233.67.112"
+    ip_version              = "IPv4"
+    location                = "westus2"
+    name                    = "publicIP"
+    resource_group_name     = "deploy_webpage_rg"
+    sku                     = "Basic"
+    tags                    = {
+        "environment" = "Production"
     }
+    zones                   = []
+}
 
-  # module.load_balancer.azurerm_lb_backend_address_pool.example will be created
-  + resource "azurerm_lb_backend_address_pool" "example" {
-      + backend_ip_configurations = (known after apply)
-      + id                        = (known after apply)
-      + load_balancing_rules      = (known after apply)
-      + loadbalancer_id           = (known after apply)
-      + name                      = "acctestpool"
-      + resource_group_name       = "deploy_webpage_rg"
-    }
 
-  # module.load_balancer.azurerm_lb_nat_rule.example will be created
-  + resource "azurerm_lb_nat_rule" "example" {
-      + backend_ip_configuration_id    = (known after apply)
-      + backend_port                   = 443
-      + enable_floating_ip             = (known after apply)
-      + frontend_ip_configuration_id   = (known after apply)
-      + frontend_ip_configuration_name = "FrontEnd-PublicIPAdress"
-      + frontend_port                  = 443
-      + id                             = (known after apply)
-      + idle_timeout_in_minutes        = (known after apply)
-      + loadbalancer_id                = (known after apply)
-      + name                           = "HTTPSAccess"
-      + protocol                       = "tcp"
-      + resource_group_name            = "deploy_webpage_rg"
-    }
+# module.virtual_network.azurerm_virtual_network.example:
+resource "azurerm_virtual_network" "example" {
+    address_space       = [
+        "10.0.0.0/16",
+    ]
+    dns_servers         = []
+    guid                = "b144b5dd-0961-44de-980c-a9f8c4ca8f53"
+    id                  = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/virtualNetworks/vir_net_webapp"
+    location            = "westus2"
+    name                = "vir_net_webapp"
+    resource_group_name = "deploy_webpage_rg"
+    subnet              = [
+        {
+            address_prefix = "10.0.1.0/24"
+            id             = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/virtualNetworks/vir_net_webapp/subnets/internal_virtsubnet"
+            name           = "internal_virtsubnet"
+            security_group = ""
+        },
+    ]
+    tags                = {}
+}
 
-  # module.load_balancer.azurerm_lb_nat_rule.example2 will be created
-  + resource "azurerm_lb_nat_rule" "example2" {
-      + backend_ip_configuration_id    = (known after apply)
-      + backend_port                   = 80
-      + enable_floating_ip             = (known after apply)
-      + frontend_ip_configuration_id   = (known after apply)
-      + frontend_ip_configuration_name = "FrontEnd-PublicIPAdress"
-      + frontend_port                  = 80
-      + id                             = (known after apply)
-      + idle_timeout_in_minutes        = (known after apply)
-      + loadbalancer_id                = (known after apply)
-      + name                           = "HTTPAccess"
-      + protocol                       = "tcp"
-      + resource_group_name            = "deploy_webpage_rg"
-    }
 
-  # module.load_balancer.azurerm_lb_nat_rule.example3 will be created
-  + resource "azurerm_lb_nat_rule" "example3" {
-      + backend_ip_configuration_id    = (known after apply)
-      + backend_port                   = 22
-      + enable_floating_ip             = (known after apply)
-      + frontend_ip_configuration_id   = (known after apply)
-      + frontend_ip_configuration_name = "FrontEnd-PublicIPAdress"
-      + frontend_port                  = 22
-      + id                             = (known after apply)
-      + idle_timeout_in_minutes        = (known after apply)
-      + loadbalancer_id                = (known after apply)
-      + name                           = "SSHAccess"
-      + protocol                       = "tcp"
-      + resource_group_name            = "deploy_webpage_rg"
-    }
+# module.load_balancer.azurerm_lb.example:
+resource "azurerm_lb" "example" {
+    id                   = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer"
+    location             = "westus2"
+    name                 = "WebPage-LoadBalancer"
+    private_ip_addresses = []
+    resource_group_name  = "deploy_webpage_rg"
+    sku                  = "Basic"
+    tags                 = {}
 
-  # module.load_balancer.azurerm_network_interface_backend_address_pool_association.example[0] will be created
-  + resource "azurerm_network_interface_backend_address_pool_association" "example" {
-      + backend_address_pool_id = (known after apply)
-      + id                      = (known after apply)
-      + ip_configuration_name   = "internal"
-      + network_interface_id    = (known after apply)
-    }
-
-  # module.load_balancer.azurerm_network_interface_backend_address_pool_association.example[1] will be created
-  + resource "azurerm_network_interface_backend_address_pool_association" "example" {
-      + backend_address_pool_id = (known after apply)
-      + id                      = (known after apply)
-      + ip_configuration_name   = "internal"
-      + network_interface_id    = (known after apply)
-    }
-
-  # module.network_interface.azurerm_network_interface.example[0] will be created
-  + resource "azurerm_network_interface" "example" {
-      + applied_dns_servers           = (known after apply)
-      + dns_servers                   = (known after apply)
-      + enable_accelerated_networking = false
-      + enable_ip_forwarding          = false
-      + id                            = (known after apply)
-      + internal_dns_name_label       = (known after apply)
-      + internal_domain_name_suffix   = (known after apply)
-      + location                      = "westus2"
-      + mac_address                   = (known after apply)
-      + name                          = "network_interface-nic-0"
-      + private_ip_address            = (known after apply)
-      + private_ip_addresses          = (known after apply)
-      + resource_group_name           = "deploy_webpage_rg"
-      + virtual_machine_id            = (known after apply)
-
-      + ip_configuration {
-          + name                          = "internal"
-          + primary                       = (known after apply)
-          + private_ip_address            = (known after apply)
-          + private_ip_address_allocation = "dynamic"
-          + private_ip_address_version    = "IPv4"
-          + subnet_id                     = (known after apply)
-        }
-    }
-
-  # module.network_interface.azurerm_network_interface.example[1] will be created
-  + resource "azurerm_network_interface" "example" {
-      + applied_dns_servers           = (known after apply)
-      + dns_servers                   = (known after apply)
-      + enable_accelerated_networking = false
-      + enable_ip_forwarding          = false
-      + id                            = (known after apply)
-      + internal_dns_name_label       = (known after apply)
-      + internal_domain_name_suffix   = (known after apply)
-      + location                      = "westus2"
-      + mac_address                   = (known after apply)
-      + name                          = "network_interface-nic-1"
-      + private_ip_address            = (known after apply)
-      + private_ip_addresses          = (known after apply)
-      + resource_group_name           = "deploy_webpage_rg"
-      + virtual_machine_id            = (known after apply)
-
-      + ip_configuration {
-          + name                          = "internal"
-          + primary                       = (known after apply)
-          + private_ip_address            = (known after apply)
-          + private_ip_address_allocation = "dynamic"
-          + private_ip_address_version    = "IPv4"
-          + subnet_id                     = (known after apply)
-        }
-    }
-
-  # module.network_security_group.azurerm_network_security_group.example will be created
-  + resource "azurerm_network_security_group" "example" {
-      + id                  = (known after apply)
-      + location            = "westus2"
-      + name                = "network_secgroup_webpage"
-      + resource_group_name = "deploy_webpage_rg"
-      + security_rule       = (known after apply)
-      + tags                = {
-          + "environment" = "Production"
-        }
-    }
-
-  # module.network_security_group.azurerm_network_security_rule.example1 will be created
-  + resource "azurerm_network_security_rule" "example1" {
-      + access                      = "Allow"
-      + destination_address_prefix  = "10.0.0.0/16"
-      + destination_port_range      = "22"
-      + direction                   = "Inbound"
-      + id                          = (known after apply)
-      + name                        = "secrule1"
-      + network_security_group_name = "network_secgroup_webpage"
-      + priority                    = 200
-      + protocol                    = "Tcp"
-      + resource_group_name         = "deploy_webpage_rg"
-      + source_address_prefix       = "10.0.0.0/16"
-      + source_port_range           = "22"
-    }
-
-  # module.network_security_group.azurerm_network_security_rule.example2 will be created
-  + resource "azurerm_network_security_rule" "example2" {
-      + access                      = "Allow"
-      + destination_address_prefix  = "10.0.0.0/16"
-      + destination_port_range      = "80"
-      + direction                   = "Inbound"
-      + id                          = (known after apply)
-      + name                        = "secrule2"
-      + network_security_group_name = "network_secgroup_webpage"
-      + priority                    = 300
-      + protocol                    = "Tcp"
-      + resource_group_name         = "deploy_webpage_rg"
-      + source_address_prefix       = "10.0.0.0/16"
-      + source_port_range           = "80"
-    }
-
-  # module.network_security_group.azurerm_network_security_rule.example3 will be created
-  + resource "azurerm_network_security_rule" "example3" {
-      + access                      = "Allow"
-      + destination_address_prefix  = "*"
-      + destination_port_range      = "*"
-      + direction                   = "Outbound"
-      + id                          = (known after apply)
-      + name                        = "secrule3"
-      + network_security_group_name = "network_secgroup_webpage"
-      + priority                    = 400
-      + protocol                    = "Tcp"
-      + resource_group_name         = "deploy_webpage_rg"
-      + source_address_prefix       = "*"
-      + source_port_range           = "*"
-    }
-
-  # module.network_security_group.azurerm_network_security_rule.example4 will be created
-  + resource "azurerm_network_security_rule" "example4" {
-      + access                      = "Allow"
-      + destination_address_prefix  = "10.0.0.0/16"
-      + destination_port_range      = "443"
-      + direction                   = "Inbound"
-      + id                          = (known after apply)
-      + name                        = "secrule4"
-      + network_security_group_name = "network_secgroup_webpage"
-      + priority                    = 500
-      + protocol                    = "Tcp"
-      + resource_group_name         = "deploy_webpage_rg"
-      + source_address_prefix       = "10.0.0.0/16"
-      + source_port_range           = "*"
-    }
-
-  # module.public_ip.azurerm_public_ip.example will be created
-  + resource "azurerm_public_ip" "example" {
-      + allocation_method       = "Static"
-      + fqdn                    = (known after apply)
-      + id                      = (known after apply)
-      + idle_timeout_in_minutes = 4
-      + ip_address              = (known after apply)
-      + ip_version              = "IPv4"
-      + location                = "westus2"
-      + name                    = "publicIP"
-      + resource_group_name     = "deploy_webpage_rg"
-      + sku                     = "Basic"
-      + tags                    = {
-          + "environment" = "Production"
-        }
-    }
-
-  # module.resource_group.azurerm_resource_group.test will be created
-  + resource "azurerm_resource_group" "test" {
-      + id       = (known after apply)
-      + location = "westus2"
-      + name     = "deploy_webpage_rg"
-    }
-
-  # module.virtual_network.azurerm_virtual_network.example will be created
-  + resource "azurerm_virtual_network" "example" {
-      + address_space       = [
-          + "10.0.0.0/16",
+    frontend_ip_configuration {
+        id                            = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/frontendIPConfigurations/FrontEnd-PublicIPAdress"
+        inbound_nat_rules             = [
+            "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/HTTPAccess",
+            "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/HTTPSAccess",
+            "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/SSHAccess",
         ]
-      + guid                = (known after apply)
-      + id                  = (known after apply)
-      + location            = "westus2"
-      + name                = "vir_net_webapp"
-      + resource_group_name = "deploy_webpage_rg"
-      + subnet              = (known after apply)
+        load_balancer_rules           = []
+        name                          = "FrontEnd-PublicIPAdress"
+        outbound_rules                = []
+        private_ip_address_allocation = "Dynamic"
+        private_ip_address_version    = "IPv4"
+        public_ip_address_id          = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/publicIPAddresses/publicIP"
+        zones                         = []
     }
+}
 
-  # module.virtual_subnet.azurerm_subnet.internal will be created
-  + resource "azurerm_subnet" "internal" {
-      + address_prefix                                 = (known after apply)
-      + address_prefixes                               = [
-          + "10.0.1.0/24",
-        ]
-      + enforce_private_link_endpoint_network_policies = false
-      + enforce_private_link_service_network_policies  = false
-      + id                                             = (known after apply)
-      + name                                           = "internal_virtsubnet"
-      + resource_group_name                            = "deploy_webpage_rg"
-      + virtual_network_name                           = "vir_net_webapp"
+# module.load_balancer.azurerm_lb_backend_address_pool.example:
+resource "azurerm_lb_backend_address_pool" "example" {
+    backend_ip_configurations = [
+        "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-0/ipConfigurations/internal",
+        "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-1/ipConfigurations/internal",
+    ]
+    id                        = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/backendAddressPools/acctestpool"
+    load_balancing_rules      = []
+    loadbalancer_id           = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer"
+    name                      = "acctestpool"
+    resource_group_name       = "deploy_webpage_rg"
+}
+
+# module.load_balancer.azurerm_lb_nat_rule.example:
+resource "azurerm_lb_nat_rule" "example" {
+    backend_port                   = 443
+    enable_floating_ip             = false
+    enable_tcp_reset               = false
+    frontend_ip_configuration_id   = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/frontendIPConfigurations/FrontEnd-PublicIPAdress"
+    frontend_ip_configuration_name = "FrontEnd-PublicIPAdress"
+    frontend_port                  = 443
+    id                             = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/HTTPSAccess"
+    idle_timeout_in_minutes        = 4
+    loadbalancer_id                = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer"
+    name                           = "HTTPSAccess"
+    protocol                       = "Tcp"
+    resource_group_name            = "deploy_webpage_rg"
+}
+
+# module.load_balancer.azurerm_lb_nat_rule.example2:
+resource "azurerm_lb_nat_rule" "example2" {
+    backend_port                   = 80
+    enable_floating_ip             = false
+    enable_tcp_reset               = false
+    frontend_ip_configuration_id   = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/frontendIPConfigurations/FrontEnd-PublicIPAdress"
+    frontend_ip_configuration_name = "FrontEnd-PublicIPAdress"
+    frontend_port                  = 80
+    id                             = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/HTTPAccess"
+    idle_timeout_in_minutes        = 4
+    loadbalancer_id                = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer"
+    name                           = "HTTPAccess"
+    protocol                       = "Tcp"
+    resource_group_name            = "deploy_webpage_rg"
+}
+
+# module.load_balancer.azurerm_lb_nat_rule.example3:
+resource "azurerm_lb_nat_rule" "example3" {
+    backend_port                   = 22
+    enable_floating_ip             = false
+    enable_tcp_reset               = false
+    frontend_ip_configuration_id   = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/frontendIPConfigurations/FrontEnd-PublicIPAdress"
+    frontend_ip_configuration_name = "FrontEnd-PublicIPAdress"
+    frontend_port                  = 22
+    id                             = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/SSHAccess"
+    idle_timeout_in_minutes        = 4
+    loadbalancer_id                = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer"
+    name                           = "SSHAccess"
+    protocol                       = "Tcp"
+    resource_group_name            = "deploy_webpage_rg"
+}
+
+# module.load_balancer.azurerm_network_interface_backend_address_pool_association.example[0]:
+resource "azurerm_network_interface_backend_address_pool_association" "example" {
+    backend_address_pool_id = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/backendAddressPools/acctestpool"
+    id                      = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-0/ipConfigurations/internal|/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/backendAddressPools/acctestpool"
+    ip_configuration_name   = "internal"
+    network_interface_id    = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-0"
+}
+
+# module.load_balancer.azurerm_network_interface_backend_address_pool_association.example[1]:
+resource "azurerm_network_interface_backend_address_pool_association" "example" {
+    backend_address_pool_id = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/backendAddressPools/acctestpool"
+    id                      = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-1/ipConfigurations/internal|/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/backendAddressPools/acctestpool"
+    ip_configuration_name   = "internal"
+    network_interface_id    = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-1"
+}
+
+
+# module.network_interface.azurerm_network_interface.example[1]:
+resource "azurerm_network_interface" "example" {
+    applied_dns_servers           = []
+    dns_servers                   = []
+    enable_accelerated_networking = false
+    enable_ip_forwarding          = false
+    id                            = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-1"
+    internal_domain_name_suffix   = "1w0ujmlbbhpejgamvh2mjsupkd.xx.internal.cloudapp.net"
+    location                      = "westus2"
+    mac_address                   = "00-0D-3A-FC-04-63"
+    name                          = "network_interface-nic-1"
+    private_ip_address            = "10.0.1.5"
+    private_ip_addresses          = [
+        "10.0.1.5",
+    ]
+    resource_group_name           = "deploy_webpage_rg"
+    tags                          = {}
+    virtual_machine_id            = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/virtualMachines/vm-1"
+
+    ip_configuration {
+        name                          = "internal"
+        primary                       = true
+        private_ip_address            = "10.0.1.5"
+        private_ip_address_allocation = "Dynamic"
+        private_ip_address_version    = "IPv4"
+        subnet_id                     = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/virtualNetworks/vir_net_webapp/subnets/internal_virtsubnet"
     }
+}
 
-Plan: 21 to add, 0 to change, 0 to destroy.
+# module.network_interface.azurerm_network_interface.example[0]:
+resource "azurerm_network_interface" "example" {
+    applied_dns_servers           = []
+    dns_servers                   = []
+    enable_accelerated_networking = false
+    enable_ip_forwarding          = false
+    id                            = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-0"
+    internal_domain_name_suffix   = "1w0ujmlbbhpejgamvh2mjsupkd.xx.internal.cloudapp.net"
+    location                      = "westus2"
+    mac_address                   = "00-0D-3A-C3-1D-9C"
+    name                          = "network_interface-nic-0"
+    private_ip_address            = "10.0.1.4"
+    private_ip_addresses          = [
+        "10.0.1.4",
+    ]
+    resource_group_name           = "deploy_webpage_rg"
+    tags                          = {}
+    virtual_machine_id            = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/virtualMachines/vm-0"
 
-------------------------------------------------------------------------
+    ip_configuration {
+        name                          = "internal"
+        primary                       = true
+        private_ip_address            = "10.0.1.4"
+        private_ip_address_allocation = "Dynamic"
+        private_ip_address_version    = "IPv4"
+        subnet_id                     = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/virtualNetworks/vir_net_webapp/subnets/internal_virtsubnet"
+    }
+}
 
-This plan was saved to: solution.plan
 
-To perform exactly these actions, run the following command to apply:
-    terraform apply "solution.plan"
+# module.virtual_subnet.azurerm_subnet.internal:
+resource "azurerm_subnet" "internal" {
+    address_prefix                                 = "10.0.1.0/24"
+    address_prefixes                               = [
+        "10.0.1.0/24",
+    ]
+    enforce_private_link_endpoint_network_policies = false
+    enforce_private_link_service_network_policies  = false
+    id                                             = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/virtualNetworks/vir_net_webapp/subnets/internal_virtsubnet"
+    name                                           = "internal_virtsubnet"
+    resource_group_name                            = "deploy_webpage_rg"
+    service_endpoints                              = []
+    virtual_network_name                           = "vir_net_webapp"
+}
 
-Releasing state lock. This may take a few moments...
+
+# module.network_security_group.azurerm_network_security_group.example:
+resource "azurerm_network_security_group" "example" {
+    id                  = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage"
+    location            = "westus2"
+    name                = "network_secgroup_webpage"
+    resource_group_name = "deploy_webpage_rg"
+    security_rule       = []
+    tags                = {
+        "environment" = "Production"
+    }
+}
+
+# module.network_security_group.azurerm_network_security_rule.example1:
+resource "azurerm_network_security_rule" "example1" {
+    access                      = "Allow"
+    destination_address_prefix  = "10.0.0.0/16"
+    destination_port_range      = "22"
+    direction                   = "Inbound"
+    id                          = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage/securityRules/secrule1"
+    name                        = "secrule1"
+    network_security_group_name = "network_secgroup_webpage"
+    priority                    = 200
+    protocol                    = "Tcp"
+    resource_group_name         = "deploy_webpage_rg"
+    source_address_prefix       = "10.0.0.0/16"
+    source_port_range           = "22"
+}
+
+# module.network_security_group.azurerm_network_security_rule.example2:
+resource "azurerm_network_security_rule" "example2" {
+    access                      = "Allow"
+    destination_address_prefix  = "10.0.0.0/16"
+    destination_port_range      = "80"
+    direction                   = "Inbound"
+    id                          = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage/securityRules/secrule2"
+    name                        = "secrule2"
+    network_security_group_name = "network_secgroup_webpage"
+    priority                    = 300
+    protocol                    = "Tcp"
+    resource_group_name         = "deploy_webpage_rg"
+    source_address_prefix       = "10.0.0.0/16"
+    source_port_range           = "80"
+}
+
+# module.network_security_group.azurerm_network_security_rule.example3:
+resource "azurerm_network_security_rule" "example3" {
+    access                      = "Allow"
+    destination_address_prefix  = "*"
+    destination_port_range      = "*"
+    direction                   = "Outbound"
+    id                          = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage/securityRules/secrule3"
+    name                        = "secrule3"
+    network_security_group_name = "network_secgroup_webpage"
+    priority                    = 400
+    protocol                    = "Tcp"
+    resource_group_name         = "deploy_webpage_rg"
+    source_address_prefix       = "*"
+    source_port_range           = "*"
+}
+
+# module.network_security_group.azurerm_network_security_rule.example4:
+resource "azurerm_network_security_rule" "example4" {
+    access                      = "Allow"
+    destination_address_prefix  = "10.0.0.0/16"
+    destination_port_range      = "443"
+    direction                   = "Inbound"
+    id                          = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage/securityRules/secrule4"
+    name                        = "secrule4"
+    network_security_group_name = "network_secgroup_webpage"
+    priority                    = 500
+    protocol                    = "Tcp"
+    resource_group_name         = "deploy_webpage_rg"
+    source_address_prefix       = "10.0.0.0/16"
+    source_port_range           = "*"
+}
+
+
+# module.resource_group.azurerm_resource_group.test:
+resource "azurerm_resource_group" "test" {
+    id       = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg"
+    location = "westus2"
+    name     = "deploy_webpage_rg"
+    tags     = {}
+}
 (.deploy-webserver) [casita@localhost test]$ 
 ```
