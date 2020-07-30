@@ -10,6 +10,6 @@ variable "availability_set" {}
 variable "vm_size" {}
 variable "admin_username" {}
 variable "admin_password" {}
-
+variable "image_id" {}
 
 variable "instance_count" {}

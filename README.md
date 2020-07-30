@@ -46,9 +46,52 @@ az group create -l westus2 -n MyResourceGroup
 packer build server.json
 ```
 
-7. Use the output *ManagedImageId* from the command *packer build server.json*, update source_image_id in *terraform/modules/virtual_machines/vm.tf*
+7. Use the output *ManagedImageId* from the command *packer build server.json*, update "image_id" in *terraform/environments/test/terraform.tfvars*
 
-8. Deploy the  terraform infraestructure
+
+8. Update the values you require for your deployment in *terraform/environments/test/terraform.tfvars*, like:
+
+```bash
+# Resource Group/Location
+location = "West US 2"
+resource_group = "deploy_webpage_rg"
+
+# Virtual Network
+virtual_network = "vir_net_webapp"
+address_space = ["10.0.0.0/16"]
+
+# Virtual SubNetwork
+virtual_subnet = "internal_virtsubnet"
+address_prefix = ["10.0.1.0/24"]
+
+# Network Security Group
+network_security_group = "network_secgroup_webpage"
+
+# Network Interface
+network_interface = "network_interface"
+ip_configuration_name = "internal"
+
+# Public IP
+public_ip_name = "publicIP"
+
+# Load Balancer
+load_balancer = "WebPage-LoadBalancer"
+frontend_ip_name = "FrontEnd-PublicIPAdress"
+
+# Availability Set &  Virtual Machines
+availability_set = "AvailabilitySet"
+vm_size = "Standard_F2"
+admin_username = "casita"
+admin_password = "P@ssw0rd1234!"
+instance_count = 2
+image_id = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/sg_image_webserver_azure/providers/Microsoft.Compute/images/ubuntuImage"
+
+#resource_type = "AppService"
+application_type = "AzureJBmyApplication1" # This name has to be globally unique.
+```
+
+
+9. Deploy the  terraform infraestructure
 ```bash
 cd terraform/environments/test/
 terraform init
@@ -534,5 +577,37 @@ resource "azurerm_resource_group" "test" {
     name     = "deploy_webpage_rg"
     tags     = {}
 }
+(.deploy-webserver) [casita@localhost test]$ 
+```
+
+Another spected output could be the following:
+
+```bash
+(.deploy-webserver) [casita@localhost test]$ terraform apply
+Acquiring state lock. This may take a few moments...
+module.resource_group.azurerm_resource_group.test: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg]
+module.network_security_group.azurerm_network_security_rule.example1: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage/securityRules/secrule1]
+module.network_security_group.azurerm_network_security_rule.example4: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage/securityRules/secrule4]
+module.network_security_group.azurerm_network_security_group.example: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage]
+module.availability_set_virtual_machines.azurerm_availability_set.example: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/availabilitySets/AvailabilitySet]
+module.network_security_group.azurerm_network_security_rule.example3: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage/securityRules/secrule3]
+module.virtual_network.azurerm_virtual_network.example: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/virtualNetworks/vir_net_webapp]
+module.public_ip.azurerm_public_ip.example: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/publicIPAddresses/publicIP]
+module.network_security_group.azurerm_network_security_rule.example2: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkSecurityGroups/network_secgroup_webpage/securityRules/secrule2]
+module.virtual_subnet.azurerm_subnet.internal: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/virtualNetworks/vir_net_webapp/subnets/internal_virtsubnet]
+module.load_balancer.azurerm_lb.example: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer]
+module.network_interface.azurerm_network_interface.example[1]: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-1]
+module.network_interface.azurerm_network_interface.example[0]: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-0]
+module.load_balancer.azurerm_lb_nat_rule.example2: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/HTTPAccess]
+module.load_balancer.azurerm_lb_nat_rule.example: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/HTTPSAccess]
+module.load_balancer.azurerm_lb_nat_rule.example3: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/inboundNatRules/SSHAccess]
+module.load_balancer.azurerm_lb_backend_address_pool.example: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/backendAddressPools/acctestpool]
+module.load_balancer.azurerm_network_interface_backend_address_pool_association.example[0]: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-0/ipConfigurations/internal|/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/backendAddressPools/acctestpool]
+module.load_balancer.azurerm_network_interface_backend_address_pool_association.example[1]: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/networkInterfaces/network_interface-nic-1/ipConfigurations/internal|/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Network/loadBalancers/WebPage-LoadBalancer/backendAddressPools/acctestpool]
+module.availability_set_virtual_machines.azurerm_linux_virtual_machine.main[0]: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/virtualMachines/vm-0]
+module.availability_set_virtual_machines.azurerm_linux_virtual_machine.main[1]: Refreshing state... [id=/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/deploy_webpage_rg/providers/Microsoft.Compute/virtualMachines/vm-1]
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+Releasing state lock. This may take a few moments...
 (.deploy-webserver) [casita@localhost test]$ 
 ```
