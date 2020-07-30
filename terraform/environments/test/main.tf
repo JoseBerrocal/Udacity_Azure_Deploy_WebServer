@@ -101,6 +101,7 @@ module "availability_set_virtual_machines" {
   admin_password          = var.admin_password
   network_interface_id    = module.network_interface.network_interface_id
   image_id                = var.image_id
+  tag_name                = var.tag_name
 }
 
 

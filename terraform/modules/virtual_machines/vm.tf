@@ -7,7 +7,7 @@ resource "azurerm_availability_set" "example" {
   managed                      = true
 
   tags = {
-    environment = "Production"
+    environment = var.tag_name
   }
 }
 

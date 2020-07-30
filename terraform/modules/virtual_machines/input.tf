@@ -11,5 +11,6 @@ variable "vm_size" {}
 variable "admin_username" {}
 variable "admin_password" {}
 variable "image_id" {}
+variable "tag_name" {}
 
 variable "instance_count" {}

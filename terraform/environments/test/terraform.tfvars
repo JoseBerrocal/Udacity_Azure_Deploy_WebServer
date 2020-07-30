@@ -37,6 +37,7 @@ admin_username = "casita"
 admin_password = "P@ssw0rd1234!"
 instance_count = 2
 image_id = "/subscriptions/c605f0e1-a75b-420d-a031-45699271f410/resourceGroups/sg_image_webserver_azure/providers/Microsoft.Compute/images/ubuntuImage"
+tag_name = "Deploy_WebServer"
 
 #resource_type = "AppService"
 application_type = "AzureJBmyApplication1" # This name has to be globally unique.
