@@ -24,6 +24,10 @@ resource "azurerm_linux_virtual_machine" "main" {
   network_interface_ids = [element(var.network_interface_id, count.index)]
   source_image_id                 = var.image_id
 
+  tags = {
+    vm = "${var.tag_name}-vm-${count.index}"  
+  }
+
   os_disk {
     storage_account_type = "Standard_LRS"
     caching              = "ReadWrite"
